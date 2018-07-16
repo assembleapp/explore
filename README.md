@@ -54,3 +54,18 @@ so let's remove it.
 > and this app is an exercise in simplicity.
 > It seems like something we should study up on at some point, though.
 > TODO: Study up on Service Workers. https://goo.gl/KwvDNy
+
+## Commit 3: Drag and Drop
+
+One of the most important and (for now) least-understood pieces of the interface
+is the ability to drag-and-drop elements throughout the application.
+
+This feature will make the application significantly more accessible
+to people with an entry-level technical background.
+
+As a baseline for the feature,
+we've adapted [this example] from the "React DnD" library's webpage.
+
+[this example]: https://react-dnd.github.io/react-dnd/examples-sortable-cancel-on-drop-outside.html
+
+We'll use it as a starting point to develop the desired behavior.
