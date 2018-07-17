@@ -1,20 +1,22 @@
 import * as React from "react"
 
-import HTML5Backend from "react-dnd-html5-backend"
-
 import {
   ConnectDragSource,
   ConnectDropTarget,
-  DragDropContext,
   DragSource,
   DragSourceMonitor,
   DropTarget,
-  DropTargetMonitor,
 } from "react-dnd"
 
-const ItemTypes = {
-  CARD: "card",
-}
+
+// This function specifies the type of element being dragged.
+//
+// It is used to determine whether or not the dragged element
+// can be dropped onto a specific target.
+//
+// It takes as an argument either the dragged element's or the target's props.
+// It must return a string or array of strings, representing the element type.
+const draggedItemType = (props) => "element"
 
 /* Typescript interfaces.
  * We aren't running Typescript,
@@ -39,23 +41,19 @@ export interface ContainerState {
   cards: any[]
 }
 
-/* Style declarations.
- * We'll migrate these to `styled-components`.
- */
+/* Style declarations */
 const cardStyle = {
-  border: "1px dashed gray",
   padding: "0.5rem 1rem",
   marginBottom: ".5rem",
   backgroundColor: "white",
   cursor: "move",
 }
 
-const containerStyle = {
-  width: 400,
-}
-
 /* Drag-and-drop source declaration */
 const cardSource = {
+  /* The value returned from this function
+   * becomes available through `monitor.getItem()`
+   */
   beginDrag(props: CardProps) {
     return {
       id: props.id,
@@ -63,6 +61,9 @@ const cardSource = {
     }
   },
 
+  /* Move the element back to its original position
+   * if it did not end up being accepted by a target.
+   */
   endDrag(props: CardProps, monitor: DragSourceMonitor) {
     const { id: droppedId, originalIndex } = monitor.getItem()
     const didDrop = monitor.didDrop()
@@ -76,15 +77,34 @@ const cardSource = {
 /* Drag-and-drop target declaration */
 
 const cardTargetForCard = {
+  // Indicates that a card cannot receive another card.
   canDrop() {
     return false
   },
 
+  /* However,
+   * a card does need to know when another card is being held on top of it.
+   * This is used to update the interface
+   * with a preview of where the card will end up.
+   *
+   * This is an interesting aspect of the drag and drop library.
+   * The order of the list is changed multiple times for each drag and drop.
+   *
+   * We'll likely want to use a view model
+   * to represent the order of the list during the drag operation,
+   * and then call `submit()` to save the change.
+   */
   hover(props: CardProps, monitor: DropTargetMonitor) {
     const { id: draggedId } = monitor.getItem()
+    // Since this function is in the context of a drop target,
+    // the first argument represents the props of the target element
+    // (i.e., the card *not* being dragged.)
     const { id: overId } = props
 
     if (draggedId !== overId) {
+      // The `findCard` and `moveCard` functions
+      // are defined in the container component,
+      // which stores the list of cards.
       const { index: overIndex } = props.findCard(overId)
       props.moveCard(draggedId, overIndex)
     }
@@ -92,21 +112,38 @@ const cardTargetForCard = {
 }
 
 const cardTargetforContainer = {
+  /* The drag-and-drop operation has completed.
+   * Save the changes to the data store.
+   */
   drop() {
-    //
-  },
+    console.log("dropped")
+  }
 }
 
 /* Dragged component */
 
-@DropTarget(ItemTypes.CARD, cardTargetForCard, connect => ({
+@DropTarget(draggedItemType, cardTargetForCard, connect => ({
   connectDropTarget: connect.dropTarget(),
 }))
-@DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
+@DragSource(draggedItemType, cardSource, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   isDragging: monitor.isDragging(),
 }))
 
+/* The card component takes a number of props as arguments:
+ * * `id`, `text`: These represent the card element being displayed.
+ *                 We should probably represent the card as a data model
+ *                 instead of loose values.
+ * * `connectDragSource`: A function provided by the `@DragSource` decorator
+ *                        to help specify which DOM elements can be dragged.
+ * * `connectDropTarget`: A function provided by the `@DropTarget` decorator
+ *                        to help specify which DOM elements
+ *                        can receive a dragged element.
+ * * `isDragging`: Provided by the `@DragSource` decorator.
+ *                 `true` when the item is being dragged.
+ *                 We use this to make the original page element invisible
+ *                 when it is being dragged to a new location.
+ */
 class Card extends React.Component<CardProps> {
   render() {
     const {
@@ -115,13 +152,13 @@ class Card extends React.Component<CardProps> {
       connectDragSource,
       connectDropTarget,
     } = this.props
-    const opacity = isDragging ? 0 : 1
+    const border = isDragging ? "2px dashed blue" : "1px dashed gray"
 
     return (
       connectDragSource &&
       connectDropTarget &&
       connectDragSource(
-        connectDropTarget(<div style={{ ...cardStyle, opacity }}>{text}</div>),
+        connectDropTarget(<div style={{ ...cardStyle, border }}>{text}</div>),
       )
     )
   }
@@ -129,11 +166,16 @@ class Card extends React.Component<CardProps> {
 
 /* Receiving component */
 
-@DragDropContext(HTML5Backend)
-@DropTarget(ItemTypes.CARD, cardTargetforContainer, connect => ({
+@DropTarget(draggedItemType, cardTargetforContainer, connect => ({
   connectDropTarget: connect.dropTarget(),
 }))
 
+/* The container component.
+ * Knows when the drag-and-drop operation ends.
+ *
+ * Stores the logic for rearranging the elements that it displays,
+ * though in this context it does not call those functions directly.
+ */
 class Container extends React.Component<
   ContainerProps,
   ContainerState
@@ -162,7 +204,7 @@ class Container extends React.Component<
     return (
       connectDropTarget &&
       connectDropTarget(
-        <div style={containerStyle}>
+        <div>
           {cards.map(card => (
             <Card
               key={card.id}
@@ -183,6 +225,8 @@ class Container extends React.Component<
     let list = this.state.cards
     list.splice(index, 1)
     list.splice(atIndex, 0, card)
+
+    console.log(list.map((item) => item.text))
 
     this.setState({ cards: list })
   }

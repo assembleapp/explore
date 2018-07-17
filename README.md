@@ -69,3 +69,7 @@ we've adapted [this example] from the "React DnD" library's webpage.
 [this example]: https://react-dnd.github.io/react-dnd/examples-sortable-cancel-on-drop-outside.html
 
 We'll use it as a starting point to develop the desired behavior.
+
+## Commit 4: Annotations
+
+Mark up the drag-and-drop logic for additional clarity.
