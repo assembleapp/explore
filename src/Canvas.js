@@ -1,4 +1,5 @@
 import * as React from "react"
+import { observer } from "mobx-react"
 
 import {
   ConnectDragSource,
@@ -35,10 +36,6 @@ export interface CardProps {
 
 export interface ContainerProps {
   connectDropTarget?: ConnectDropTarget
-}
-
-export interface ContainerState {
-  cards: any[]
 }
 
 /* Style declarations */
@@ -144,6 +141,7 @@ const cardTargetforContainer = {
  *                 We use this to make the original page element invisible
  *                 when it is being dragged to a new location.
  */
+@observer
 class Card extends React.Component<CardProps> {
   render() {
     const {
@@ -176,69 +174,27 @@ class Card extends React.Component<CardProps> {
  * Stores the logic for rearranging the elements that it displays,
  * though in this context it does not call those functions directly.
  */
-class Container extends React.Component<
-  ContainerProps,
-  ContainerState
-> {
-  constructor(props: ContainerProps) {
-    super(props)
-    this.moveCard = this.moveCard.bind(this)
-    this.findCard = this.findCard.bind(this)
-    this.state = {
-      cards: [
-        { id: 1, text: "1" },
-        { id: 2, text: "2" },
-        { id: 3, text: "3" },
-        { id: 4, text: "4" },
-        { id: 5, text: "5" },
-        { id: 6, text: "6" },
-        { id: 7, text: "7" },
-      ],
-    }
-  }
-
+@observer
+class Container extends React.Component<ContainerProps> {
   render() {
     const { connectDropTarget } = this.props
-    const { cards } = this.state
 
     return (
       connectDropTarget &&
       connectDropTarget(
         <div>
-          {cards.map(card => (
+          {this.props.store.cards.map(card => (
             <Card
               key={card.id}
               id={card.id}
               text={card.text}
-              moveCard={this.moveCard}
-              findCard={this.findCard}
+              moveCard={this.props.store.moveCard}
+              findCard={this.props.store.findCard}
             />
           ))}
         </div>,
       )
     )
-  }
-
-  moveCard(id: string, atIndex: number) {
-    const { card, index } = this.findCard(id)
-
-    let list = this.state.cards
-    list.splice(index, 1)
-    list.splice(atIndex, 0, card)
-
-    console.log(list.map((item) => item.text))
-
-    this.setState({ cards: list })
-  }
-
-  findCard(id: string) {
-    const { cards } = this.state
-    const card = cards.filter(c => c.id === id)[0]
-
-    return {
-      card,
-      index: cards.indexOf(card),
-    }
   }
 }
 

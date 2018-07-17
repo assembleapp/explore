@@ -73,3 +73,10 @@ We'll use it as a starting point to develop the desired behavior.
 ## Commit 4: Annotations
 
 Mark up the drag-and-drop logic for additional clarity.
+
+## Commit 5: Extract state
+
+Move the list of elements to a [Weststrate store],
+instead of hard-coding the values in the container component.
+
+[Weststrate store]: https://hackernoon.com/how-to-decouple-state-and-ui-a-k-a-you-dont-need-componentwillmount-cc90b787aa37
