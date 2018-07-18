@@ -11,6 +11,13 @@ class Booking {
   @observable line_items: [LineItem]
 
 // TODO: ensure no overlap for (service, table_number), start_time - end_time
+
+  constructor(data) {
+    this.service = data.service
+    this.table_number = data.table_number
+    this.start_time = data.start_time
+    this.end_time = data.end_time
+  }
 }
 
 export default Booking

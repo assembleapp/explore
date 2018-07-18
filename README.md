@@ -1,56 +1,42 @@
-# Building Nimbus from scratch
+# Architecture
 
-This document outlines a standard process for building apps.
+The platform has three main peices to it:
 
-You can view it as a tutorial of sorts;
-if you follow it from start to finish,
-you'll have a working Nimbus Point of Sale app.
+* data
+* layout
+* templates
 
-There are several `TODO`'s sprinkled throughout the document.
-They represent things that I'd personally like to follow up on at some point.
+## Templates
 
-## Initialization (Commit 0)
+Templates are the easiest to explain: they're React components.
 
-Okay, I'm starting to write the Nimbus app from scratch,
-using the best practices I've discovered in the past couple months.
+## Layouts
 
-First things first, let's get an app going:
+Layouts are somewhat dynamic -
+they're designed to be restructured pretty fluidly.
 
-```bash
-npx create-react-app nimbus
-cd nimbus
-yarn
-yarn start
-```
+Each change to the layout is handled
+through methods on the `Layout` objects.
+These a collection of changes can be recorded as a macro,
+which can then be tied to events in the application.
 
-## Commit 1
+Layouts each have a `root` property,
+which is expected to be a component generated with `styled-components`.
+Outside of styles built into React components,
+layout root components are responsible for the app's styling.
 
-Next up, we'll add a few libraries that will make our lives 10000% easier.
+> TODO:
+> It is important that the layout updates itself whenever appropriate.
+> To handle this, templates passed to any `Layout` should be wrapped
+> in `mobx-react`'s `observer` function.
 
-```bash
-yarn add \
-  mobx \
-  mobx-react \
-  mobx-react-devtools \
-  mobx-utils \
-  react-app-rewire-mobx \
-  styled-components
+## Data
 
-yarn add -D react-app-rewired
-```
+Data are defined as Javascript objects
+with observable properties.
 
-And [rewire] our app to support MobX.
+We want to keep data as flexible as possible for now,
+and simple JS classes seem to do a fine job at the moment.
 
-[rewire]: https://github.com/timarney/react-app-rewired/tree/master/packages/react-app-rewire-mobx
-
-## Commit 2
-
-We don't need the boilerplate page
-that `create-react-app` gives us out of the box,
-so let's remove it.
-
-> Note: We're removing `src/registerServiceWorker.js`,
-> mostly because we don't really know what it does,
-> and this app is an exercise in simplicity.
-> It seems like something we should study up on at some point, though.
-> TODO: Study up on Service Workers. https://goo.gl/KwvDNy
+We'll need more experience integrating with 3rd-party systems
+before we can get big gains on this front.

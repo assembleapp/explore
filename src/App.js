@@ -1,6 +1,9 @@
 import React from "react"
 import { observer } from "mobx-react"
-import Layout from "./Layout"
+
+import ItemLayout from "./layout/Item"
+import ListLayout from "./layout/List"
+import PageLayout from "./layout/Page"
 
 @observer
 class App extends React.Component {
@@ -9,16 +12,39 @@ class App extends React.Component {
   }
 
   renderElement(element) {
-    if(element instanceof Layout)
+    if(element instanceof PageLayout)
       return (
         React.createElement(
           element.root,
           {},
-          element.children.map(child => this.renderElement(child))
+          element.layouts.map(layout => this.renderElement(layout))
         )
       );
-    else
+    else if(element instanceof ListLayout)
+      return (
+        React.createElement(
+          element.root,
+          {},
+          element.items.map(item =>
+            this.renderElement(element.template(item))
+          )
+        )
+      )
+    else if(element instanceof ItemLayout) {
+      return (
+        element.element
+        ? React.createElement(
+            element.root,
+            {},
+            this.renderElement(element.template(element.element))
+          )
+        : null
+      )
+    }
+    else if(element instanceof React.Component)
       return React.createElement(element)
+    else
+      return element
   }
 }
 
