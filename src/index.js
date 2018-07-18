@@ -28,13 +28,31 @@ layout.root = styled.div`
 `
 
 let lobby = new Layout()
+layout.addChild(lobby)
+
 lobby.root = styled.div`
   height: 100%;
 `
 
-lobby.addList(store.services, ({item}) => <div>{item.emoji}</div>)
+let services = lobby.representList(
+  store.services,
+  ({item}) => <div>
+    <Center>{item.emoji}</Center>
 
-layout.addChild(lobby)
+    {Array.apply(null, Array(item.table_count)).map((_, i) =>
+      <div>{i}</div>
+    )}
+  </div>
+)
+
+services.root = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+`
+
+const Center = styled.div`
+  text-align: center;
+`
 
 layout.addChild(styled.div`
   background-color: navy;
@@ -43,5 +61,6 @@ layout.addChild(styled.div`
 `)
 
 window.store = store
+// window.debug = true
 
 ReactDOM.render(<App layout={layout} />, document.getElementById('root'));

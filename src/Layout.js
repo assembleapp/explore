@@ -12,11 +12,29 @@ class Layout {
   }
 
   @action
-  addList = (list, component) => {
-    list.forEach(item => {
-      this.addChild(() => React.createElement(component, { item: item }))
-    })
+  representList = (list, component) => {
+    let listElement = new Layout()
+
+    listElement.children = list.map(item => () =>
+      <DataContext item={item}>
+        {React.createElement(component, { item: item })}
+      </DataContext>
+    )
+
+    this.addChild(listElement)
+    return listElement
   }
 }
+
+const DataContext = (props) =>
+  <div>
+    {window.debug &&
+      <span style={{ color: "grey"}}>
+        {JSON.stringify(props.item)}
+      </span>
+    }
+
+    {props.children}
+  </div>
 
 export default Layout
