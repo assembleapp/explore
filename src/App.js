@@ -35,14 +35,19 @@ class App extends React.Component {
 
         <CustomizationBoundary>
           { selectedLayout
-            ? <LiveProvider code={selectedLayout.template} scope={this.codeContext()} >
+            ? <LiveProvider
+                code={selectedLayout.template}
+                scope={this.codeContext({ item: selectedLayout.element || selectedLayout.items[0] }) }
+              >
                 <h2>Edit the UI element</h2>
 
                 <Section>
                   <h3>Available variables</h3>
-                  <Comment>
-                    {JSON.stringify(this.codeContext())}
-                  </Comment>
+
+                  Item:
+                  <pre>
+                    {JSON.stringify(selectedLayout.element || selectedLayout.items[0], null, 2)}
+                  </pre>
                 </Section>
 
                 <Section>
