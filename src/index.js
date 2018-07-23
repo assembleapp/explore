@@ -38,23 +38,20 @@ lobby.display(services)
 services.root = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  text-align: center;
 `
 
-const repeat = (number, collect) =>
-  Array
-    .apply(null, Array(number))
-    .map((_, i) => collect(i + 1))
+services.template = `
+  <div>
+    <div>{item.emoji}</div>
 
-services.template = (service) =>
-  <Center>
-    <div>{service.emoji}</div>
-
-    {repeat(service.table_count, table_number =>
-      <div role="button" onClick={() => showTable(service, table_number)} >
+    {repeat(item.table_count, table_number =>
+      <div role="button" onClick={() => actions.showTable(item, table_number)} >
         {table_number}
       </div>
     )}
-  </Center>
+  </div>
+`
 
 const showTable = action((service, table_number) => {
   let booking = store.bookings.filter(booking =>
@@ -76,10 +73,6 @@ const showTable = action((service, table_number) => {
   return booking
 })
 
-const Center = styled.div`
-  text-align: center;
-`
-
 let detail = new ItemLayout()
 detail.root = styled.div`
   background-color: navy;
@@ -94,4 +87,7 @@ detail.template = (booking) => {
 
 layout.display(detail)
 
-ReactDOM.render(<App layout={layout} />, document.getElementById('root'));
+ReactDOM.render(
+  <App layout={layout} actions={{ showTable }} />,
+  document.getElementById('root'),
+);
