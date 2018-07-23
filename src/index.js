@@ -46,7 +46,10 @@ services.template = `
     <div>{item.emoji}</div>
 
     {repeat(item.table_count, table_number =>
-      <div role="button" onClick={() => actions.showTable(item, table_number)} >
+      <div
+        role="button"
+        onClick={() => actions.showTable(item, table_number)}
+        >
         {table_number}
       </div>
     )}
@@ -88,6 +91,6 @@ detail.template = (booking) => {
 layout.display(detail)
 
 ReactDOM.render(
-  <App layout={layout} actions={{ showTable }} />,
+  <App layout={layout} actions={{ showTable }} store={store} />,
   document.getElementById('root'),
 );

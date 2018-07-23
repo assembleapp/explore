@@ -25,6 +25,8 @@ class App extends React.Component {
   }
 
   render() {
+    let { selectedLayout } = this.state
+
     return (
       <AppContainer>
         <AppBoundary>
@@ -32,15 +34,52 @@ class App extends React.Component {
         </AppBoundary>
 
         <CustomizationBoundary>
-          { this.state.selectedLayout
-            && <LiveProvider code={this.state.selectedLayout.template} >
-                 <LiveEditor onChange={(newCode) => this.state.selectedLayout.template = newCode} />
-                 <LiveError />
-               </LiveProvider>
+          { selectedLayout
+            ? <LiveProvider code={selectedLayout.template} scope={this.codeContext()} >
+                <h2>Edit the UI element</h2>
+
+                <Section>
+                  <h3>Available variables</h3>
+                  <Comment>
+                    {JSON.stringify(this.codeContext())}
+                  </Comment>
+                </Section>
+
+                <Section>
+                  <h3>Markup (in React)</h3>
+                  <LiveEditor onChange={(newCode) => selectedLayout.template = newCode} />
+                  <LiveError />
+                </Section>
+              </LiveProvider>
+            : <div>
+                Select an element to get started!
+              </div>
           }
+
+          <Section>
+            <h3>Data</h3>
+            {Object.keys(this.props.store).map(key =>
+              <div>
+                {key}:
+                <pre>
+                  {JSON.stringify(this.props.store[key], null, 2)}
+                </pre>
+              </div>
+            )}
+          </Section>
         </CustomizationBoundary>
       </AppContainer>
     )
+  }
+
+  codeContext(overrides) {
+    return {
+      item: {},
+      repeat,
+      actions: this.props.actions,
+      Comment,
+      ...overrides
+    }
   }
 
   renderElement(element) {
@@ -58,9 +97,11 @@ class App extends React.Component {
           element.root,
           { onClick: (e => { this.setState({ selectedLayout: element }) }) },
           element.items.map(item =>
-            <LiveProvider code={element.template} scope={{ item, repeat, actions: this.props.actions, Comment }} >
-              <LivePreview />
-            </LiveProvider>
+            <Selectable>
+              <LiveProvider code={element.template} scope={this.codeContext({item})} >
+                <LivePreview />
+              </LiveProvider>
+            </Selectable>
           )
         )
       )
@@ -84,11 +125,14 @@ class App extends React.Component {
 
 const AppContainer = styled.div`
   display: grid;
-  grid-template-columns: auto 40rem;
+  grid-template-columns: auto 35rem;
 `
 
 const AppBoundary = styled.div``
-const CustomizationBoundary = styled.div``
+const CustomizationBoundary = styled.div`
+  border-left: 1rem solid grey;
+  padding: 1rem;
+`
 
 // Utility function.
 // We need to find a better way to handle this.
@@ -96,5 +140,15 @@ const repeat = (number, collect) =>
   Array
     .apply(null, Array(number))
     .map((_, i) => collect(i + 1))
+
+const Selectable = styled.div`
+  &:hover {
+    border: 1px solid blue;
+  }
+`
+
+const Section = styled.div`
+  margin-top: 1rem;
+`
 
 export default App;

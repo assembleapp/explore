@@ -1,4 +1,3 @@
-import React from "react"
 import { observable } from "mobx"
 import styled from "styled-components"
 
