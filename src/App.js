@@ -6,6 +6,7 @@ import Comment from "./debug/Comment"
 import ItemLayout from "./layout/Item"
 import ListLayout from "./layout/List"
 import PageLayout from "./layout/Page"
+import StyleForm from "./StyleForm"
 
 import {
   LiveProvider,
@@ -39,6 +40,12 @@ class App extends React.Component {
                 code={selectedLayout.template}
                 scope={this.codeContext({ item: selectedLayout.element || selectedLayout.items[0] }) }
               >
+                <h2>Style the component</h2>
+                <StyleForm
+                  styles={selectedLayout.styles}
+                  onChange={styles => selectedLayout.styles = { ...selectedLayout.styles, ...styles }}
+                />
+
                 <h2>Edit the UI element</h2>
 
                 <Section>

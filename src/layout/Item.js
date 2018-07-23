@@ -1,16 +1,19 @@
 import React from "react"
-import styled from "styled-components"
-import { observable } from "mobx"
-import Comment from "../debug/Comment"
+import { observable, computed } from "mobx"
+import { observer } from "mobx-react"
 
 class ItemLayout {
-  @observable root = styled.div``
+  @observable styles = {}
   @observable element = null
   @observable template = `
     <Comment>
       Hi!
     </Comment>
   `
+
+  @computed get root() {
+    return observer(props => <div style={{...this.styles}} {...props} />)
+  }
 }
 
 export default ItemLayout

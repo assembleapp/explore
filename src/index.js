@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { action } from "mobx"
-import styled from "styled-components"
 import moment from "moment"
 
 import './index.css';
@@ -18,28 +17,28 @@ import data from "./data.json"
 let layout = new PageLayout()
 let store = new Store(data)
 
-layout.root = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100vh;
-`
+layout.styles = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  height: "100vh",
+}
 
 let lobby = new PageLayout()
 layout.display(lobby)
 
-lobby.root = styled.div`
-  height: 100%;
-`
+lobby.styles = {
+  height: "100%",
+}
 
 let services = new ListLayout()
 services.items = store.services
 lobby.display(services)
 
-services.root = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  text-align: center;
-`
+services.styles = {
+  display: "grid",
+  gridTemplateColumns: "repeat(3, 1fr)",
+  textAlign: "center",
+}
 
 services.template = `
   <div>
@@ -77,11 +76,12 @@ const showTable = action((service, table_number) => {
 })
 
 let detail = new ItemLayout()
-detail.root = styled.div`
-  background-color: navy;
-  color: white;
-  height: 100%;
-`
+detail.styles = {
+  backgroundColor: "navy",
+  color: "white",
+  height: "100%",
+}
+
 detail.template = `
   <h1>
     {item.service.emoji} {item.service.name} #{item.table_number}

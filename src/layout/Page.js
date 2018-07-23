@@ -1,16 +1,19 @@
-import { observable, action } from "mobx"
-import styled from "styled-components"
+import React from "react"
+import { observable, action, computed } from "mobx"
+import { observer } from "mobx-react"
 
-/* Displays multiple layouts on the page.
- * Apply styles to the `root` property, using a `styled.div`.
- */
+/* Displays multiple layouts on the page. */
 class PageLayout {
-  @observable root = styled.div``
+  @observable styles = {}
   @observable layouts = []
 
   @action
   display = (layout) => {
     this.layouts.push(layout)
+  }
+
+  @computed get root() {
+    return observer(props => <div style={{...this.styles}} {...props} />)
   }
 }
 
