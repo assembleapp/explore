@@ -1,0 +1,7 @@
+{
+  "services": [
+    { "emoji": "🀄", "name": "mahjong", "unit_price": 20, "table_count": 8 },
+    { "emoji": "🎱", "name": "pool", "unit_price": 20, "table_count": 4 },
+    { "emoji": "🎤", "name": "karaoke", "unit_price": 20, "table_count": 4 }
+  ]
+}

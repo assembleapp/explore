@@ -11,21 +11,12 @@ import ItemLayout from "./layout/Item"
 import ListLayout from "./layout/List"
 import PageLayout from "./layout/Page"
 
-import Booking from "./data/Booking"
-import LineItem from "./data/LineItem"
-import Product from "./data/Product"
-import Service from "./data/Service"
-
 import Store from "./Store"
+import Booking from "./data/Booking"
+import data from "./data.json"
 
 let layout = new PageLayout()
-let store = new Store({
-  services: [
-    { emoji: "🀄", name: "mahjong", unit_price: 20, table_count: 8 },
-    { emoji: "🎱", name: "pool", unit_price: 20, table_count: 4 },
-    { emoji: "🎤", name: "karaoke", unit_price: 20, table_count: 4 },
-  ]
-})
+let store = new Store(data)
 
 layout.root = styled.div`
   display: grid;
@@ -85,8 +76,6 @@ const showTable = action((service, table_number) => {
   return booking
 })
 
-window.showTable = showTable
-
 const Center = styled.div`
   text-align: center;
 `
@@ -104,8 +93,5 @@ detail.template = (booking) => {
 }
 
 layout.display(detail)
-
-window.store = store
-// window.debug = true
 
 ReactDOM.render(<App layout={layout} />, document.getElementById('root'));
