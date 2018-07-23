@@ -82,11 +82,11 @@ detail.root = styled.div`
   color: white;
   height: 100%;
 `
-detail.template = (booking) => {
-  return <h1>
-    {booking.service.emoji} {booking.service.name} #{booking.table_number}
+detail.template = `
+  <h1>
+    {item.service.emoji} {item.service.name} #{item.table_number}
   </h1>
-}
+`
 
 layout.display(detail)
 

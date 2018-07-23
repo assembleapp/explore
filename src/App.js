@@ -110,8 +110,12 @@ class App extends React.Component {
         element.element
         ? React.createElement(
             element.root,
-            {},
-            this.renderElement(element.template(element.element))
+            { onClick: (e => { this.setState({ selectedLayout: element }) }) },
+            <Selectable>
+              <LiveProvider code={element.template} scope={ this.codeContext({ item: element.element }) } >
+                <LivePreview />
+              </LiveProvider>
+            </Selectable>
           )
         : null
       )
@@ -132,6 +136,8 @@ const AppBoundary = styled.div``
 const CustomizationBoundary = styled.div`
   border-left: 1rem solid grey;
   padding: 1rem;
+  height: 100vh;
+  overflow-y: scroll;
 `
 
 // Utility function.
