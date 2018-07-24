@@ -7,7 +7,12 @@ import Comment from "./debug/Comment"
 import ItemLayout from "./layout/Item"
 import ListLayout from "./layout/List"
 import PageLayout from "./layout/Page"
+
 import StyleForm from "./StyleForm"
+import ReactTable from "react-table"
+import "react-table/react-table.css";
+
+import { Drag } from "mdi-material-ui"
 
 import {
   LiveProvider,
@@ -22,14 +27,35 @@ class App extends React.Component {
 
   render() {
     let selectedLayout = this.selectedLayout
+    let { store } = this.props
 
     return (
       <AppContainer>
+        <DataBoundary>
+          <h2>Data</h2>
+
+          {Object.keys(store).map(key =>
+            store[key].length > 0
+            ? <Section>
+                <h3>{key} <DragIcon/></h3>
+
+                <ReactTable
+                  data={store[key]}
+                  columns={store.tableFieldsFor(key)}
+                  defaultPageSize={5}
+                />
+              </Section>
+            : <Section>
+                <h3>No {key}</h3>
+              </Section>
+          )}
+        </DataBoundary>
+
         <AppBoundary>
           {this.renderElement(this.props.layout)}
         </AppBoundary>
 
-        <CustomizationBoundary>
+        <StyleBoundary>
           { selectedLayout
             ? <LiveProvider
                 code={selectedLayout.template}
@@ -62,19 +88,7 @@ class App extends React.Component {
                 Select an element to get started!
               </div>
           }
-
-          <Section>
-            <h3>Data</h3>
-            {Object.keys(this.props.store).map(key =>
-              <div>
-                {key}:
-                <pre>
-                  {JSON.stringify(this.props.store[key], null, 2)}
-                </pre>
-              </div>
-            )}
-          </Section>
-        </CustomizationBoundary>
+        </StyleBoundary>
       </AppContainer>
     )
   }
@@ -136,11 +150,17 @@ class App extends React.Component {
 
 const AppContainer = styled.div`
   display: grid;
-  grid-template-columns: auto 35rem;
+  grid-template-columns: 35rem auto 35rem;
 `
 
 const AppBoundary = styled.div``
-const CustomizationBoundary = styled.div`
+const DataBoundary = styled.div`
+  border-right: 1rem solid grey;
+  padding: 1rem;
+  height: 100vh;
+  overflow-y: scroll;
+`
+const StyleBoundary = styled.div`
   border-left: 1rem solid grey;
   padding: 1rem;
   height: 100vh;
@@ -164,6 +184,10 @@ const Section = styled.div`
   border-top: 4px solid grey;
   margin-bottom: 1rem;
   margin-top: 1rem;
+`
+
+const DragIcon = styled(Drag)`
+  float: right;
 `
 
 export default App;

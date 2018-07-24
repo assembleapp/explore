@@ -18,6 +18,14 @@ class Booking {
     this.start_time = data.start_time
     this.end_time = data.end_time
   }
+
+  @computed get formatted_start_time() {
+    return this.start_time.format()
+  }
+
+  @computed get formatted_end_time() {
+    return this.end_time.format()
+  }
 }
 
 export default Booking
