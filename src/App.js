@@ -1,5 +1,6 @@
 import React from "react"
 import { observer } from "mobx-react"
+import { observable } from "mobx"
 import styled from "styled-components"
 import Comment from "./debug/Comment"
 
@@ -17,16 +18,10 @@ import {
 
 @observer
 class App extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      selectedLayout: null,
-    }
-  }
+  @observable selectedLayout = null
 
   render() {
-    let { selectedLayout } = this.state
+    let selectedLayout = this.selectedLayout
 
     return (
       <AppContainer>
@@ -107,7 +102,7 @@ class App extends React.Component {
       return (
         React.createElement(
           element.root,
-          { onClick: (e => { this.setState({ selectedLayout: element }) }) },
+          { onClick: () => this.selectedLayout = element },
           element.items.map(item =>
             <Selectable>
               <LiveProvider code={element.template} scope={this.codeContext({item})} >
@@ -122,7 +117,7 @@ class App extends React.Component {
         element.element
         ? React.createElement(
             element.root,
-            { onClick: (e => { this.setState({ selectedLayout: element }) }) },
+            { onClick: () => this.selectedLayout = element },
             <Selectable>
               <LiveProvider code={element.template} scope={ this.codeContext({ item: element.element }) } >
                 <LivePreview />
@@ -166,6 +161,8 @@ const Selectable = styled.div`
 `
 
 const Section = styled.div`
+  border-top: 4px solid grey;
+  margin-bottom: 1rem;
   margin-top: 1rem;
 `
 
