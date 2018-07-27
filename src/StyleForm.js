@@ -13,6 +13,13 @@ import {
   FormatColorText,
 } from "mdi-material-ui"
 
+/*
+ * In addition to standard React style properties,
+ * this form works with a few custom ones:
+ *
+ * gridRowCount (used to calculate `grid-template-rows`)
+ * gridColumnCount (used to calculate `grid-template-columns`)
+ */
 @observer
 class StyleForm extends React.Component {
   render() {
@@ -52,6 +59,36 @@ class StyleForm extends React.Component {
             color={this.props.styles.color}
             onChange={color => this.props.onChange({ color: color.hex })}
           />
+        </div>
+
+        <div>
+          <h3>Grid Settings</h3>
+
+          <div>
+            <label># Columns</label>
+            <input
+              type="number"
+              value={this.props.gridColumnCount || 1}
+              onChange={e => this.props.onChange({
+                display: "grid",
+                gridColumnCount: e.target.value,
+                gridTemplateColumns: `repeat(${e.target.value}, 1fr)`,
+              })}
+            />
+          </div>
+
+          <div>
+            <label># Rows</label>
+            <input
+              type="number"
+              value={this.props.gridRowCount || 1}
+              onChange={e => this.props.onChange({
+                display: "grid",
+                gridRowCount: e.target.value,
+                gridTemplateRows: `repeat(${e.target.value}, 1fr)`,
+              })}
+            />
+          </div>
         </div>
       </div>
     )

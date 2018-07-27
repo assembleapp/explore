@@ -7,54 +7,15 @@ import './index.css';
 import App from './App';
 
 import ItemLayout from "./layout/Item"
-import ListLayout from "./layout/List"
 import PageLayout from "./layout/Page"
 
 import Store from "./Store"
 import Booking from "./data/Booking"
 import data from "./data.json"
 
-let layout = new PageLayout()
 let store = new Store(data)
 
-layout.styles = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  height: "100vh",
-}
-
-let lobby = new PageLayout()
-layout.display(lobby)
-
-lobby.styles = {
-  height: "100%",
-}
-
-let services = new ListLayout()
-services.items = store.services
-lobby.display(services)
-
-services.styles = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  textAlign: "center",
-}
-
-services.template = `
-  <div>
-    <div>{item.emoji}</div>
-
-    {repeat(item.table_count, table_number =>
-      <div
-        role="button"
-        onClick={() => actions.showTable(item, table_number)}
-        >
-        {table_number}
-      </div>
-    )}
-  </div>
-`
-
+// Actions
 const showTable = action((service, table_number) => {
   let booking = store.bookings.filter(booking =>
     booking.service === service &&
@@ -75,7 +36,20 @@ const showTable = action((service, table_number) => {
   return booking
 })
 
+// Layout elements
+let layout = new PageLayout()
+layout.styles = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  height: "100vh",
+}
+
+let lobby = new PageLayout()
+layout.display(lobby)
+
 let detail = new ItemLayout()
+layout.display(detail)
+
 detail.styles = {
   backgroundColor: "navy",
   color: "white",
@@ -87,8 +61,6 @@ detail.template = `
     {item.service.emoji} {item.service.name} #{item.table_number}
   </h1>
 `
-
-layout.display(detail)
 
 ReactDOM.render(
   <App layout={layout} actions={{ showTable }} store={store} />,

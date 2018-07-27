@@ -13,6 +13,8 @@ import ReactTable from "react-table"
 import "react-table/react-table.css";
 
 import { Drag } from "mdi-material-ui"
+import { DragDropContext, DragSource } from "react-dnd"
+import HTML5Backend from "react-dnd-html5-backend"
 
 import {
   LiveProvider,
@@ -21,6 +23,14 @@ import {
   LivePreview
 } from 'react-live'
 
+const ListDragSource = {
+  beginDrag(props) {
+    console.log("dragging!")
+    return props
+  },
+}
+
+@DragDropContext(HTML5Backend)
 @observer
 class App extends React.Component {
   @observable selectedLayout = null
@@ -37,7 +47,7 @@ class App extends React.Component {
           {Object.keys(store).map(key =>
             store[key].length > 0
             ? <Section>
-                <h3>{key} <DragIcon/></h3>
+                <h3>{key} <DragHandle list={store[key]} /></h3>
 
                 <ReactTable
                   data={store[key]}
@@ -150,17 +160,19 @@ class App extends React.Component {
 
 const AppContainer = styled.div`
   display: grid;
-  grid-template-columns: 35rem auto 35rem;
+  grid-template-columns: 25rem auto 25rem;
 `
 
 const AppBoundary = styled.div``
 const DataBoundary = styled.div`
+  font-size: 12px;
   border-right: 1rem solid grey;
   padding: 1rem;
   height: 100vh;
   overflow-y: scroll;
 `
 const StyleBoundary = styled.div`
+  font-size: 12px;
   border-left: 1rem solid grey;
   padding: 1rem;
   height: 100vh;
@@ -176,7 +188,7 @@ const repeat = (number, collect) =>
 
 const Selectable = styled.div`
   &:hover {
-    border: 1px solid blue;
+    border: 2px dashed grey;
   }
 `
 
@@ -185,6 +197,14 @@ const Section = styled.div`
   margin-bottom: 1rem;
   margin-top: 1rem;
 `
+
+
+@DragSource("list", ListDragSource, (connect) => ({ connect: connect.dragSource() }))
+class DragHandle extends React.Component {
+  render = () => (
+    this.props.connect(<span><DragIcon /></span>)
+  )
+}
 
 const DragIcon = styled(Drag)`
   float: right;

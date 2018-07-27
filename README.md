@@ -40,3 +40,29 @@ and simple JS classes seem to do a fine job at the moment.
 
 We'll need more experience integrating with 3rd-party systems
 before we can get big gains on this front.
+
+## Tutorial: Build Nimbus
+
+Our goal with this app
+is that we should be able to use it to re-create the Nimbus POS app.
+
+There's some boilerplate code in `src/index.js`
+that placed some of the Nimbus POS UI on the page.
+We'll be extracting that code out into this README,
+as a set of instructions the user can follow
+to create the app themselves.
+
+```javascript
+<div>
+  <div>{item.emoji}</div>
+
+  {repeat(item.table_count, table_number =>
+    <div
+      role="button"
+      onClick={() => actions.showTable(item, table_number)}
+      >
+      {table_number}
+    </div>
+  )}
+</div>
+```
